@@ -7,6 +7,9 @@ $(function() {
     History.pushState(null,null,url);
   });
 
+  $("a[rel=imageFiles]").fancybox();
+  //$("table").tablesorter();
+
 });
 
 var started = false;
@@ -14,6 +17,9 @@ var started = false;
 window.onpopstate = function(event){
   if (started){
     fillWithDir(History.getState().hash);
+    var title = "Index of: "+History.getState().hash;
+    $(document).attr('title',title);
+    $("h1").html(title);
   }else{
     started = true;
   }
@@ -21,14 +27,19 @@ window.onpopstate = function(event){
 
 function fillWithDir(dir){
   $.ajax({ 
-        url : '',
+        url : iofUrl,
         type : "post",
         data : {dir:dir},
         complete: function(jqXHR,textStatus){
           //console.log(jqXHR.responseText);
           if (textStatus=="success"){
             $("table tbody").animate({height:0,opacity:0},250,function(){
-              $(this).html(jqXHR.responseText).css({height:"auto"}).html(jqXHR.responseText).animate({opacity:1},250);
+              var r = jQuery.parseJSON(jqXHR.responseText);
+              if (r.type == 'content'){
+                $(this).html(r.value).css({height:"auto"}).animate({opacity:1},250);
+              }else{
+                window.location = r.value;
+              }
             });
           }
         }

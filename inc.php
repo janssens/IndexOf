@@ -1,45 +1,33 @@
 <?php
 
-  $root = '';
+  /*
+  Settings:
+  */
+  $folderName = 'IndexOf'; //name of the directory
+  $indexFiles = array('index.php','index.html'); //list of file to use prior to File listing?
+  $imgFiles = array('jpg','jpeg','gif','png'); //list of what should be lightboxed
+
+
+  $iofPath = pathinfo($_SERVER['SCRIPT_FILENAME']);
+  $iofPath = $iofPath['dirname'];
+  $root = str_replace($folderName, '', str_replace($_SERVER['DOCUMENT_ROOT'], '', $iofPath));  
 
   function process_dir($dir,$recursive = FALSE) {
+    global $folderName;
     if (is_dir($dir)) {
       for ($list = array(),$handle = opendir($dir); (FALSE !== ($file = readdir($handle)));) {
-        if (($file != '.' && $file != '..' && $file != '.iof') && (file_exists($path = $dir.'/'.$file))) {
+        if (($file != '.' && $file != '..' && $file != $folderName) && (file_exists($path = $dir.'/'.$file))) {
           if (is_dir($path) && ($recursive)) {
             $list = array_merge($list, process_dir($path, TRUE));
           } else {
             $entry = array('filename' => $file, 'dirpath' => substr($dir, 2));
-
-             //---------------------------------------------------------//
-             //                     - SECTION 1 -                       //
-             //          Actions to be performed on ALL ITEMS           //
-             //-----------------    Begin Editable    ------------------//
-
-              $entry['modtime'] = filemtime($path);
-
-             //-----------------     End Editable     ------------------//
-                        do if (!is_dir($path)) {
-             //---------------------------------------------------------//
-             //                     - SECTION 2 -                       //
-             //         Actions to be performed on FILES ONLY           //
-             //-----------------    Begin Editable    ------------------//
-
+            $entry['modtime'] = filemtime($path);
+            do if (!is_dir($path)) {
               $entry['size'] = filesize($path);
-              /*if (strstr(pathinfo($path,PATHINFO_BASENAME),'log')) {
-                if (!$entry['handle'] = fopen($path,r)) $entry['handle'] = "FAIL";
-              }*/
               $entry['type'] = pathinfo($path, PATHINFO_EXTENSION);
-              
-             //-----------------     End Editable     ------------------//
-                          break;
-                        } else {
-             //---------------------------------------------------------//
-             //                     - SECTION 3 -                       //
-             //       Actions to be performed on DIRECTORIES ONLY       //
-             //-----------------    Begin Editable    ------------------//
+              break;
+            } else {
               $entry['type'] = 'dir';
-             //-----------------     End Editable     ------------------//
               break;
             } while (FALSE);
             $list[] = $entry;
@@ -61,6 +49,7 @@
   $srcs["pdf"] = 'acrobat';
   $srcs["zip"] = 'archive';
   $srcs["rar"] = 'archive';
+  $srcs["gz"] = 'archive';
   $srcs["7zip"] = 'archive';
   $srcs["css"] = 'css';
   $srcs["less"] = 'css';
@@ -108,31 +97,42 @@
   $srcs["dir"] = 'folder';
   
   function getImgSrcFromType($type){
-    global $srcs;
-    $r = $srcs[$type];
-    if (!$r){
+    global $srcs,$root,$folderName;
+    if (isset($srcs[$type])){
+      $r = $srcs[$type];
+    }else{
       $r = $srcs["default"];
     }
-    return "http://".$_SERVER['HTTP_HOST'].$root.'/.iof/img/png/'.$r.".png";
+    return "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName.'/img/png/'.$r.".png";
   }
 
   function getRaws($files){
+    global $imgFiles;
     $r = '';
-    foreach ($files as $file) {
-      $r .= '<tr class="'.$file['type'].'">';
-      $r .= '<td val="'.$file['filename'].'">';
-      $r .= '<a class="';
-      $r .= ($file['type']=='dir') ? "ajax" : "";
-      $r .= '" href="'.$file['dirpath'].$file['filename'];
-      $r .= ($file['type']=='dir') ? "/" : "";
-      $r .= '">';
-      $r .= '<img src="'.getImgSrcFromType($file['type']).'" />'.$file['filename'].'</a></td>';
-      $r .= '<td val="'.$file['type'].'">';
-      $r .= ($file['type']=='dir') ? "folder":$file['type'];
-      $r .= '</td>';
-      $r .= '<td val="'.$file['modtime'].'">'.date('Y-m-d H:i:s',$file['modtime']).'</td>';
-      $r .= '<td val="'.$file['size'].'">'.human_filesize($file['size']).'</td>';
-      $r .= '</tr>';
+    if ($files && is_array($files)){
+      foreach ($files as $file) {
+        if (!isset($file['size'])){
+          $file['size'] = 0;
+        }
+
+        $r .= '<tr class="'.$file['type'].'">';
+        $r .= '<td val="'.$file['filename'].'">';
+        $r .= '<a class="';
+        $r .= ($file['type']=='dir') ? "ajax" : "";
+        $r .= '" href="'.$file['filename'];
+        $r .= ($file['type']=='dir') ? "/" : "";
+        $r .= (in_array($file['type'], $imgFiles)) ? '" rel="imageFiles"' : '"';
+        $r .= '>';
+        $r .= '<img src="'.getImgSrcFromType($file['type']).'" />'.$file['filename'].'</a></td>';
+        $r .= '<td val="'.$file['type'].'">';
+        $r .= ($file['type']=='dir') ? "folder":$file['type'];
+        $r .= '</td>';
+        $r .= '<td val="'.$file['modtime'].'">'.date('Y-m-d H:i:s',$file['modtime']).'</td>';
+        $r .= '<td val="'.$file['size'].'">';
+        $r .= ($file['type']=='dir') ? "" : human_filesize($file['size']);
+        $r .= '</td>';
+        $r .= '</tr>';
+      }
     }
     return $r;
   }
