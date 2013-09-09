@@ -42,10 +42,10 @@ if ($indexFiles){
       <table class="table table-condensed table-hover tablesorter col-12 col-lg-12">
         <thead>
           <tr>
-            <th>Nom</th>
-            <th>Type</th>
-            <th>Derni&egrave;re Modification</th>
-            <th>Taille</th>
+            <th>Nom<span></span></th>
+            <th>Type<span></span></th>
+            <th>Derni&egrave;re Modification<span></span></th>
+            <th>Taille<span></span></th>
           </tr>
         </thead>
         <tbody>

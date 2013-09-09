@@ -5,3 +5,24 @@ table tr td img{
 	width: 10%;
 	max-width: 30px; 
 }
+.table-condensed thead>tr>th{
+	position: relative;
+	padding-left: 14px;
+	cursor: pointer;
+}
+.table-condensed thead>tr>th span{
+	display: none;
+	position: absolute;
+	left: 0px;
+	top: 14px;
+	width: 14px;
+	height: 6px;
+	background-image: url(../img/arrow-sort.png);
+	background-position: bottom;
+}
+.table-condensed thead>tr>th:hover span{
+	display: block;
+}
+.table-condensed thead>tr>th.asc span{
+	background-position: top;
+}
