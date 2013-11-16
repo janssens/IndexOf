@@ -44,6 +44,7 @@ function fillWithDir(dir){
               if (r.type == 'content'){
                 $(this).html(r.value).css({height:"auto"}).animate({opacity:1},250);
               }else{
+                History.pushState(null,null,History.getStateByIndex(-2).url);
                 window.location = r.value;
               }
             });
