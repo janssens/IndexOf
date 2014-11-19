@@ -119,7 +119,7 @@
         }
 
         $r .= '<tr class="'.$file['type'].'">';
-        $r .= '<td val="'.$file['filename'].'">';
+        $r .= '<td val="'.strtolower($file['filename']).'">';
         $r .= '<a class="';
         $r .= ($file['type']=='dir') ? "ajax" : "";
         $r .= '" href="'.$file['filename'];

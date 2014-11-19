@@ -13,6 +13,10 @@ $(function() {
     fillWithDir(pathFromState+path,true);
   });
 
+  $(document).on("click",function(){
+    $("#filter").focus();
+  });
+
   $("table thead th").on("click",function(event){
     event.preventDefault();
     sortTable($("table"),$("table thead th").index(jQuery(this)),jQuery(this).hasClass("asc"));
@@ -21,6 +25,18 @@ $(function() {
 
   $("a[rel=imageFiles]").fancybox();
   //$("table").tablesorter();
+
+  $("#filter").focus();
+  $("#filter_value").css({opacity:0});
+
+
+  $("#filter").on("keyup",function(event){
+    filterTable($("table"),$(this).val().toLowerCase());
+    $("#filter_value").html($(this).val());
+    $("#filter_value").stop().animate({opacity:1},300,function(){
+      $(this).animate({opacity:0},300);
+    });
+  });
 
 });
 
@@ -45,6 +61,8 @@ window.onpopstate = function(event) {
     fillWithDir(pathFromState,false);
     proccessNewPath(pathFromState);
   }
+
+  $("#filter").val('').focus();
   
 };
 
@@ -106,4 +124,16 @@ function sortTable(element,index,asc){ //tri bulle
     }
     max = tmp;
   }
+}
+
+function filterTable(element,chain){
+  if (typeof(chain)!= "undefined" && chain.length > 0 ){
+    element.find("tbody tr").each(function(){
+      $(this).find("td:first:not([val*='"+chain+"'])").parent().hide(200);
+      $(this).find("td:first[val*='"+chain+"']").parent().show(200);
+    });
+  }else{
+    element.find("tbody tr").show();
+  }
+
 }

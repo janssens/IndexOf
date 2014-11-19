@@ -40,6 +40,8 @@ if ($indexFiles){
   <title>Index of: <?php echo $_SERVER['REQUEST_URI']; ?></title>
 </head>
 <body>
+  <input type="text" id="filter" placeholder="type to filter"/>
+  <span id="filter_value"></span>
   <div class="container">
     <div class="raw">
       <h1>Index of: <?php echo $_SERVER['REQUEST_URI']; ?></h1>
@@ -58,6 +60,7 @@ if ($indexFiles){
       </table>
     </div>
   </div>
+  
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script>
   if (!window.jQuery) { document.write('<script src="<?php echo "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/jquery.min.js"><\/script>');}
