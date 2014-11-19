@@ -4,17 +4,21 @@
 if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
   /* special ajax here */
   header('Content-type: application/json');
+  $dir = $_POST['dir'];
+  if ($dir[0]!='/'){
+    $dir = '/'.$dir;
+  }
   if ($indexFiles){
     foreach ($indexFiles as $key => $value) {
-      if(file_exists($_SERVER['DOCUMENT_ROOT'].$_POST['dir'].$value)){
+      if(file_exists($_SERVER['DOCUMENT_ROOT'].$dir.$value)){
         //die('Location: '.'http://'.$_SERVER['HTTP_HOST'].$_POST['dir'].$value);
-        $json = json_encode(array("type"=>'header',"value"=>'http://'.$_SERVER['HTTP_HOST'].$_POST['dir'].$value));
+        $json = json_encode(array("type"=>'header',"value"=>'http://'.$_SERVER['HTTP_HOST'].$dir.$value));
         die($json);
       }
     }
   }
-  $result = process_dir($_SERVER['DOCUMENT_ROOT'].$_POST['dir'],FALSE);
-  $json = json_encode(array("type"=>'content',"value"=>getRaws($result)));
+  $result = process_dir($_SERVER['DOCUMENT_ROOT'].$dir,FALSE);
+  $json = json_encode(array("type"=>'content',"value"=>getRaws($result),"debug_info"=>$_SERVER['DOCUMENT_ROOT'].$dir));
   die($json);
 }
 $dirname = str_replace($folderName, '', $iofPath);

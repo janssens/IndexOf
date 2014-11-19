@@ -1,12 +1,15 @@
 <?php
 
-  /*
-  Settings:
-  */
-  $folderName = 'IndexOf'; //name of the directory
+  /*******************
+   * BEGIN Settings:
+   *******************/
+  $folderName = '.iof'; //name of the directory
   $indexFiles = array('index.php','index.html'); //list of file to use prior to File listing?
   $imgFiles = array('jpg','jpeg','gif','png'); //list of what should be lightboxed
-
+  define('DEBUG', true);
+  /*******************
+   * END Settings:
+   *******************/
 
   $iofPath = pathinfo($_SERVER['SCRIPT_FILENAME']);
   $iofPath = $iofPath['dirname'];

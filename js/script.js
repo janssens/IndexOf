@@ -3,9 +3,14 @@ $(function() {
   $("table").on("click","a.ajax",function(event){
     event.preventDefault();
     var $a = $(this);
-    var url = $a.attr("href");
-    History.pushState(null,null,url);
-    jQuery(window).trigger("onpopstate");
+    var path = $a.attr("href");
+
+    var pathFromState = History.getState().data.path;
+    if (typeof(pathFromState) == "undefined"){ 
+      pathFromState = "/";
+    }
+
+    fillWithDir(pathFromState+path,true);
   });
 
   $("table thead th").on("click",function(event){
@@ -19,14 +24,40 @@ $(function() {
 
 });
 
-window.onpopstate = function(event){
-    fillWithDir(History.getState().hash);
-    var title = "Index of: "+History.getState().hash;
+window.onpopstate = function(event) {
+  
+  var pathFromState = History.getState().data.path; 
+  if (typeof(pathFromState) == "undefined"){ 
+    pathFromState = '/';
+  }  
+  var depthFromState = History.getState().data.depth;
+  if (typeof(depthFromState) == "undefined"){ 
+    depthFromState = 0;
+  }
+  var lastDepthFromState = History.getStateByIndex(-2).data.depth;
+  if (typeof(lastDepthFromState) == "undefined"){ 
+    lastDepthFromState = 0;
+  }
+
+  if (depthFromState > lastDepthFromState ){ // forward
+    proccessNewPath(pathFromState);
+  }else{ // backward
+    fillWithDir(pathFromState,false);
+    proccessNewPath(pathFromState);
+  }
+  
+};
+
+function proccessNewPath(path){
+    if (typeof(path) == "undefined"){
+      path = '/';
+    }
+    var title = "Index of: "+path;
     $(document).attr('title',title);
     $("h1").html(title);
 }
 
-function fillWithDir(dir){
+function fillWithDir(dir,forward){
   $.ajax({ 
         url : iofUrl,
         type : "post",
@@ -38,7 +69,13 @@ function fillWithDir(dir){
             if (r.type == 'content'){
               $("table tbody").animate({height:0,opacity:0},250,function(){
                 $(this).html(r.value).css({height:"auto"}).animate({opacity:1},250);
-                History.pushState(null,null,History.getStateByIndex(-2).url);
+                var depth = History.getState().data.depth;
+                if (typeof(depth) == "undefined"){ 
+                  depth = 0;
+                }
+                if (forward){
+                  History.pushState({path: dir, depth: depth+1}, " ", dir);
+                }
               });
             }else{
               window.location = r.value;
