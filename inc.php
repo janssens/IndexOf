@@ -18,22 +18,25 @@
   function process_dir($dir,$recursive = FALSE) {
     global $folderName;
     if (is_dir($dir)) {
-      for ($list = array(),$handle = opendir($dir); (FALSE !== ($file = readdir($handle)));) {
-        if (($file != '.' && $file != '..' && $file != $folderName) && (file_exists($path = $dir.'/'.$file))) {
-          if (is_dir($path) && ($recursive)) {
-            $list = array_merge($list, process_dir($path, TRUE));
-          } else {
-            $entry = array('filename' => $file, 'dirpath' => substr($dir, 2));
-            $entry['modtime'] = filemtime($path);
-            do if (!is_dir($path)) {
-              $entry['size'] = filesize($path);
-              $entry['type'] = pathinfo($path, PATHINFO_EXTENSION);
-              break;
+      if ($handle = opendir($dir)) {
+        $list = array();
+        while (FALSE !== ($file = readdir($handle))) {
+          if (($file != '.' && $file != '..' && $file != $folderName) && (file_exists($path = $dir.'/'.$file))) {
+            if (is_dir($path) && ($recursive)) {
+              $list = array_merge($list, process_dir($path, TRUE));
             } else {
-              $entry['type'] = 'dir';
-              break;
-            } while (FALSE);
-            $list[] = $entry;
+              $entry = array('filename' => $file, 'dirpath' => substr($dir, 2));
+              $entry['modtime'] = filemtime($path);
+              do if (!is_dir($path)) {
+                $entry['size'] = filesize($path);
+                $entry['type'] = pathinfo($path, PATHINFO_EXTENSION);
+                break;
+              } else {
+                $entry['type'] = 'dir';
+                break;
+              } while (FALSE);
+              $list[] = $entry;
+            }
           }
         }
       }
