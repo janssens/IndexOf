@@ -32,7 +32,9 @@ $(function() {
 
   $("#filter").on("keyup",function(event){
     if (event.which == 13){
-      firstVisible($("table")).find("a:first").click();
+      var dest = firstVisible($("table")).find("a:first").attr("href");
+      window.location = dest;
+      return;
     }
     filterTable($("table"),$(this).val().toLowerCase());
     $("#filter_value").html($(this).val());
