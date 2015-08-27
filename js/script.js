@@ -31,6 +31,9 @@ $(function() {
 
 
   $("#filter").on("keyup",function(event){
+    if (event.which == 13){
+      firstVisible($("table")).find("a:first").click();
+    }
     filterTable($("table"),$(this).val().toLowerCase());
     $("#filter_value").html($(this).val());
     $("#filter_value").stop().animate({opacity:1},300,function(){
@@ -136,4 +139,8 @@ function filterTable(element,chain){
     element.find("tbody tr").show();
   }
 
+}
+
+function firstVisible(element){
+  return element.find("tbody tr:visible:first");
 }
