@@ -1,5 +1,6 @@
 <?php include_once("inc.php"); ?>
 <?php
+$prot = ($_SERVER['HTTPS'])? 'https' : 'http'.'://';
 /* AJAX check  */
 if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
   /* special ajax here */
@@ -11,8 +12,8 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
   if ($indexFiles){
     foreach ($indexFiles as $key => $value) {
       if(file_exists($_SERVER['DOCUMENT_ROOT'].$dir.$value)){
-        //die('Location: '.'http://'.$_SERVER['HTTP_HOST'].$_POST['dir'].$value);
-        $json = json_encode(array("type"=>'header',"value"=>'http://'.$_SERVER['HTTP_HOST'].$dir.$value));
+        //die('Location: '.$prot.$_SERVER['HTTP_HOST'].$_POST['dir'].$value);
+        $json = json_encode(array("type"=>'header',"value"=>$prot.$_SERVER['HTTP_HOST'].$dir.$value));
         die($json);
       }
     }
@@ -26,7 +27,7 @@ $dirname .= str_replace($root, '', $_SERVER['REQUEST_URI']);
 if ($indexFiles){
     foreach ($indexFiles as $key => $value) {
       if(file_exists($dirname.$value)){
-        header('Location: '.'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$value);
+        header('Location: '.$prot.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$value);
         exit;
       }
     }
@@ -34,9 +35,9 @@ if ($indexFiles){
 ?>
 <html>
 <head>
-  <link rel="stylesheet" href="<?php echo "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/css/bootstrap.min.css">
-  <link rel="stylesheet" href="<?php echo "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/css/jquery.fancybox.css">
-  <link rel="stylesheet" href="<?php echo "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/css/main.css">
+  <link rel="stylesheet" href="<?php echo "//".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?php echo "//".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/css/jquery.fancybox.css">
+  <link rel="stylesheet" href="<?php echo "//".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/css/main.css">
   <title>Index of: <?php echo $_SERVER['REQUEST_URI']; ?></title>
 </head>
 <body>
@@ -65,12 +66,12 @@ if ($indexFiles){
   <script>
   if (!window.jQuery) { document.write('<script src="<?php echo "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/jquery.min.js"><\/script>');}
   </script>
-  <script src="<?php echo "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/jquery.history.js"></script>
-  <script src="<?php echo "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/jquery.fancybox.pack.js"></script>
-  <script src="<?php echo "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/jquery.tablesorter.min.js"></script>
+  <script src="<?php echo "//".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/jquery.history.js"></script>
+  <script src="<?php echo "//".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/jquery.fancybox.pack.js"></script>
+  <script src="<?php echo "//".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/jquery.tablesorter.min.js"></script>
   <script type="text/javascript">
   var iofUrl = '<?php echo $_SERVER['SCRIPT_NAME']; ?>';
   </script>
-  <script src="<?php echo "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/script.js"></script>
+  <script src="<?php echo "//".$_SERVER['HTTP_HOST'].$root.'/'.$folderName ?>/js/script.js"></script>
 </body>
 </html>

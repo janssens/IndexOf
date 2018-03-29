@@ -109,7 +109,7 @@
     }else{
       $r = $srcs["default"];
     }
-    return "http://".$_SERVER['HTTP_HOST'].$root.'/'.$folderName.'/img/png/'.$r.".png";
+    return "//".$_SERVER['HTTP_HOST'].$root.'/'.$folderName.'/img/png/'.$r.".png";
   }
 
   function getRaws($files){
